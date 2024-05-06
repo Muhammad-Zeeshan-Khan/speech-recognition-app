@@ -6,6 +6,4 @@ This is a Speech Recognition Application for Windows built with a graphical user
 
 ## Project Members
 
-- **Supervisor:** Iqtidar Ali
-- **Programmer:** Muhammad Zeeshan Khan (Roll Number: 264)
-- **Contributor:** Shah Nawaz (Roll Number: 266)
+- **By:** Muhammad Zeeshan Khan (Roll Number: 264)
