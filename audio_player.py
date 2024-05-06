@@ -7,15 +7,19 @@ class AudioPlayer:
         self.playing = False
 
     def play_pause(self):
-        if self.audio_file:
-            if not self.playing:
-                pygame.mixer.init()
-                pygame.mixer.music.load(self.audio_file)
-                pygame.mixer.music.play()
-                self.playing = True
-            else:
-                pygame.mixer.music.stop()
-                self.playing = False
+        try:
+            if self.audio_file:
+                if not self.playing:
+                    pygame.mixer.init()
+                    pygame.mixer.music.load(self.audio_file)
+                    pygame.mixer.music.play()
+                    self.playing = True
+                else:
+                    pygame.mixer.music.stop()
+                    self.playing = False
+        except Exception as e:
+            print(e)
+            pass
 
     def update_time(self):
         if self.playing:
@@ -28,9 +32,7 @@ class AudioPlayer:
                 new_time = (
                     f"{self.format_time(elapsed_time)} / {self.format_time(total_time)}"
                 )
-                print(
-                    f"New Time: {new_time} | Elapsed Time: {elapsed_time+1} | Total Time: {total_time}"
-                )
+                # print(f"New Time: {new_time} | Elapsed Time: {elapsed_time+1} | Total Time: {total_time}")
                 return new_time
 
     def format_time(self, seconds):
