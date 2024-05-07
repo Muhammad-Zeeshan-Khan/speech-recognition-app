@@ -18,10 +18,10 @@ class GUI:
         self.root.geometry("1000x535")
         self.root.resizable(width=False, height=False)
         self.root.title("Audio Transcription App")
-        self.icon_image = tk.PhotoImage(
-            file="C:/Users/Muhammad Zeeshan/Desktop/Project/speech-recognition/others/icon-small.png"
-        )
-        self.root.iconphoto(True, self.icon_image)
+        # self.icon_image = tk.PhotoImage(
+        #     file="C:/Users/Muhammad Zeeshan/Desktop/Project/speech-recognition/others/icon-small.png"
+        # )
+        # self.root.iconphoto(True, self.icon_image)
 
         self.utils = utils.Utils(root)
 
@@ -80,12 +80,16 @@ class GUI:
     # ------------------------------------------------------------------------------
     def exit(self):
         # No transcription thread
-        if self.utils.start_transcription is None:
+        if (
+            self.utils.start_transcription is None
+            and self.utils.start_subtitle_creation is None
+        ):
             self.root.destroy()
         else:
             self.utils.player.playing = True  # If the audio is playing, then stop it
             self.utils.player.play_pause()
             self.utils.stop_thread_event.set()
+            self.sub.stop_thread_event.set()
             self.root.destroy()
 
     # ------------------------------------------------------------------------------

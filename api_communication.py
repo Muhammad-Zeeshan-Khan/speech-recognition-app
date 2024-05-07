@@ -35,7 +35,6 @@ def upload(filename):
         )
         return upload_response.json()["upload_url"]
     except requests.exceptions.RequestException as e:
-        # global status_label
         status_label.config(text="Status: Error uploading file")
         raise RuntimeError(f"{e}")
 
@@ -80,7 +79,7 @@ def get_subtitle_file(audio_url, file_format):
     while True:
         data = poll(transcribe_id)
         if data["status"] == "completed":
-            return requests.get(url, headers=headers)
+            return requests.get(url, headers=headers), None
         elif data["status"] == "error":
             return data, "[error]"
         time.sleep(4)
@@ -88,10 +87,10 @@ def get_subtitle_file(audio_url, file_format):
 
 # ------------------------- x ------------------------- x
 # a_url = upload(
-#     "C:\\Users\\Muhammad Zeeshan\\Desktop\\Project\\speech-recognition\\test_files\\female's voice.wav"
+#     "C:\\Users\\Muhammad Zeeshan\\Desktop\\speech-recognition\\test_files\\male's voice.wav"
 # )
 
 # print("uploading completed")
-# response = get_subtitle_file(a_url, "srt")
-# print(response)
+# response, err = get_subtitle_file(a_url, "srt")
+# # print(response)
 # print(response.text)

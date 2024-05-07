@@ -51,7 +51,7 @@ class Transcription:
         )
         self.upload_button.grid(row=0, column=0, padx=10, pady=10)
 
-        # Label to show the selected file name
+        # ---------------------- Label to show the selected file name
         self.file_label = self.create_label(self.tab, "Selected file")
         self.file_label.grid(row=1, column=0, sticky="w", padx=10, pady=2)
 
