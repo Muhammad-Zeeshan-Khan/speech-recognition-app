@@ -11,10 +11,10 @@ class Utils:
         self.root = root_obj
 
         self.audio_label = None
-        self.status_label = None
         self.file_label = None
         self.file_path = None
 
+        self.status_label_trans = None
         self.status_label_subtitle = None
 
         # Clear subtitle file label, if error occurs during upload
@@ -46,7 +46,14 @@ class Utils:
             )
             self.start_transcription.start()
 
-    def initiate_transcription(self, subtitle_format=None):
+    def initiate_transcription(self, sub_format=None):
+        subtitle_format = sub_format
+
+        # Set transcription status label to uploading when subtitle format is none
+        if subtitle_format is None:
+            api.st_label_trans = self.status_label_trans
+            api.set_status_flag("transcription")
+
         try:
             audio_url = api.upload(self.file_path)
 
@@ -60,7 +67,7 @@ class Utils:
                 subtitle, error_sub = api.get_subtitle_file(audio_url, subtitle_format)
                 if subtitle:
                     self.save_file(subtitle.text, subtitle_format)
-                    print("entered the function...")
+
                 else:
                     self.status_label_subtitle.config(text=f"Status: Error!! f{str(e)}")
                     self.subtitle_file_address_label.config(text="Select New File:")
@@ -68,7 +75,7 @@ class Utils:
 
             # FOR TRANSCRIPTION
             elif subtitle_format is None:
-                self.status_label.config(
+                self.status_label_trans.config(
                     text="Status: Transcription started... Please wait."
                 )
 
@@ -78,7 +85,7 @@ class Utils:
                     self.save_file(data)
                 else:
                     self.file_label.config(text="Select New File:")
-                    self.status_label.config(text=f"Status: Error!! f{str(e)}")
+                    self.status_label_trans.config(text=f"Status: Error!! f{str(e)}")
                     raise ValueError(error_t)
 
         except Exception as e:
@@ -95,6 +102,9 @@ class Utils:
             sys.exit(1)
             # self.start_transcription._stop
             # self.start_subtitle_creation._stop
+
+    # Set subtitle_format back to none when at the end of the function
+    subtitle_format = None
 
     def save_file(self, data=None, subtitle_format=None):
         # Set the directory, to save response
@@ -113,10 +123,17 @@ class Utils:
         if data:
             text_filename = os.path.join(res_directory, file_name)
             with open(text_filename, "w") as f:
-                print("writing file..........")
                 (f.write(data["text"]) if subtitle_format is None else f.write(data))
-                print("subtitle saved")
-            # self.status_label.config(text=f"Status: File saved as {file_name}")
+
+                if subtitle_format is not None:
+                    self.status_label_subtitle.config(
+                        text=f"Status: Subtitle saved as {file_name}"
+                    )
+
+                elif subtitle_format is None:
+                    self.status_label_trans.config(
+                        text=f"Status: File saved as {file_name}"
+                    )
 
     # -------------- AUDIO PLAYING HANDLERS
     def play_audio(self):

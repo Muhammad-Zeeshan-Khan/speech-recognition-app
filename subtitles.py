@@ -16,9 +16,6 @@ class Subtitles:
         # Flag to signal the thread to stop
         self.stop_thread_event = threading.Event()
 
-        # # Set the labels in utils for modification purpose
-        # self.utils.status_label_subtitle = self.status_label_subtitle
-
     def create_sub(self):
         # Get the selected subtitle format and convert to lower case
         self.subtitle_format = self.dropdown_menu.get().lower()
@@ -38,7 +35,9 @@ class Subtitles:
             self.utils.subtitle_file_address_label = self.file_label
 
             # if errors occurs during upload, set new stutus
-            api.set_status(self.status_label_subtitle)
+            # api.set_status(self.status_label_subtitle)
+            api.st_label_sub = self.status_label_subtitle
+            api.set_status_flag("subtitle")
 
             # Start transcription in another thread
             self.utils.start_subtitle_creation = threading.Thread(
@@ -104,7 +103,13 @@ class Subtitles:
         )
         self.upload_button.grid(row=2, column=0, padx=10, pady=10)
 
-        # ---------------------- LABEL TO SHOW THE SELECTED FILE NAME
+        # ----------------------------------------- SHOW RESPONSE BUTTON
+        self.show_response_button = self.create_button(
+            self.tab, "Show Response", self.utils.show_response
+        )
+        self.show_response_button.grid(row=3, column=0, padx=10, pady=10)
+
+        # ---------------------- LABEL TO SHOW THE STATUS
         self.status_label_subtitle = self.create_label(
             self.tab,
             "⚠️ Do not exit the program during creation process",

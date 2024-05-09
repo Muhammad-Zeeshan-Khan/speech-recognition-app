@@ -10,6 +10,23 @@ headers = {"authorization": "3c6d8da6fde74785aa3e71571c482a16"}
 # Set status
 status_label = None
 
+# Status Labels
+st_label_trans = None
+st_label_sub = None
+# st_label_summ = None
+
+
+def set_status_flag(flag=None):
+    global st_label_trans
+    global st_label_sub
+    # global st_label_summ
+
+    if flag == "transcription":
+        set_status(st_label_trans)
+
+    elif flag == "subtitle":
+        set_status(st_label_sub)
+
 
 def set_status(st_label):
     global status_label
@@ -34,6 +51,7 @@ def upload(filename):
             upload_endpoint, headers=headers, data=read_file(filename)
         )
         return upload_response.json()["upload_url"]
+
     except requests.exceptions.RequestException as e:
         status_label.config(text="Status: Error uploading file")
         raise RuntimeError(f"{e}")

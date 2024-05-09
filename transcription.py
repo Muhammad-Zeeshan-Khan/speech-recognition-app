@@ -1,6 +1,6 @@
 import tkinter as tk
-import utils
 
+import utils
 import api_communication as api
 
 
@@ -72,15 +72,15 @@ class Transcription:
         self.audio_time.grid(row=2, column=0, sticky="w", padx=10, pady=2)
 
         # -------------- Status Details Label
-        self.status_label = self.create_label(
+        self.status_label_trans = self.create_label(
             self.tab,
             "⚠️ Do not exit the program during transcription process",
             18,
             12,
         )
-        self.status_label.grid(row=5, column=0, padx=6)
+        self.status_label_trans.grid(row=5, column=0, padx=6)
 
         self.utils.audio_label = self.audio_time
-        self.utils.status_label = self.status_label
         self.utils.file_label = self.file_label
-        api.set_status(self.status_label)
+
+        self.utils.status_label_trans = self.status_label_trans

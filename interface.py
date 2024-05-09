@@ -5,8 +5,11 @@ import os
 
 import utils
 from api_communication import *
+
 import transcription
 import subtitles
+import summary
+import credits
 
 # Resolve Blurred Tkinter Text
 windll.shcore.SetProcessDpiAwareness(1)
@@ -41,6 +44,10 @@ class GUI:
         self.subtitle = ttk.Frame(self.notebook)
         self.notebook.add(self.subtitle, text=" Create Subtitles ")
 
+        # Summary Tab
+        self.summary = ttk.Frame(self.notebook)
+        self.notebook.add(self.summary, text=" Summarize Audio ")
+
         # Credits Tab
         self.credits_tab = ttk.Frame(self.notebook)
         self.notebook.add(self.credits_tab, text=" Credits ")
@@ -53,28 +60,21 @@ class GUI:
         self.sub = subtitles.Subtitles(self.root, self.subtitle)
         self.sub.widgets()
 
-        # ------------------------------------------------------------------------------ Tab - CREDITS
-        credits_text = """\t\t\t\tProjects Credits\n\nSupervisor: Dr. Iqtidar Ali\nLead Programmer: Muhammad Zeeshan (Roll Number: 264)\nContributor: Shah Nawaz (Roll Number: 266)
-        \nAcknowledgments:\nWe express our gratitude to Dr. Iqtidar Ali for providing valuable guidance and support throughout the development of this speech recognition project. Special thanks to Muhammad Zeeshan for his dedicated programming efforts, bringing the project to fruition. Additionally, we appreciate Shah Nawaz for his contribution in coordinating meetings with the supervisor and handling administrative tasks.\n\nThis project wouldn't have been possible without the collaborative efforts of the team.\n\nThis project was conducted at the University of Agriculture, Peshawar."""
+        # ------------------------------------------------------------------------------ Tab - SUMMARIZE AUDIO
+        self.summ = summary.Summarize(self.root, self.summary)
+        self.summ.widgets()
 
-        credits_label = tk.Label(
-            self.credits_tab,
-            text=credits_text,
-            wraplength=900,
-            font=("Arial", 12),
-            justify=tk.LEFT,
-            fg="#fff",
-            bg="#232323",
-            padx=10,
-            pady=10,
-            width=100,
-            anchor="w",
-        )
-        credits_label.grid(row=0, column=0, padx=10, pady=20)
+        # ------------------------------------------------------------------------------ Tab - CREDITS
+        self.credit = credits.Credits(self.root, self.credits_tab)
 
     # ------------------------------------------------------------------------------
     def prepare_exit(self):
-        self.trans.status_label.config(text="Exiting the program. Please pe patient...")
+        self.trans.status_label_trans.config(
+            text="Exiting the program. Please pe patient..."
+        )
+        self.sub.status_label_subtitle.config(
+            text="Exiting the program. Please pe patient..."
+        )
         self.root.after(300, self.exit)
 
     # ------------------------------------------------------------------------------
