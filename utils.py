@@ -2,29 +2,35 @@ import os
 import sys
 import threading
 import api_communication as api
-from tkinter import filedialog, messagebox
+from tkinter import messagebox
 from audio_player import AudioPlayer
 
 
 class Utils:
     def __init__(self, root_obj):
         self.root = root_obj
+        self.player = AudioPlayer()
 
-        self.audio_label = None
-        self.file_label = None
+        # The following variabel is used by transcription, subtitle and summary
         self.file_path = None
 
+        # Time stamp label on the GUI (00 / 00)
+        self.audio_label = None
+
+        # Status labels of all the tabes
         self.status_label_trans = None
         self.status_label_subtitle = None
+        self.status_label_summ = None
 
-        # Clear subtitle file label, if error occurs during upload
+        # Clear file label, if error occurs during upload
+        self.file_label = None
         self.subtitle_file_address_label = None
-
-        self.player = AudioPlayer()
+        self.summary_file_address_label = None
 
         # Reference
         self.start_transcription = None
         self.start_subtitle_creation = None
+        self.start_summary_creation = None
 
         # Cancel all the calls before schedulling another call
         self.schedule_call = self.update_audio_time_label
@@ -32,33 +38,16 @@ class Utils:
         # Flag to signal the thread to stop
         self.stop_thread_event = threading.Event()
 
-    # -------------- UPLOAD HANDLERS
-    def upload_file(self):
-        self.file_path = filedialog.askopenfilename(filetypes=[("WAV files", "*.wav")])
-        self.player.audio_file = self.file_path
-
-        if self.file_path:
-            self.file_label.config(text="Selected File: " + self.file_path)
-
-            # Start transcription in another thread
-            self.start_transcription = threading.Thread(
-                target=self.initiate_transcription
-            )
-            self.start_transcription.start()
-
-    def initiate_transcription(self, sub_format=None):
+    def initiate_transcription(self, sub_format=None, isSummarization=False):
         subtitle_format = sub_format
-
-        # Set transcription status label to uploading when subtitle format is none
-        if subtitle_format is None:
-            api.st_label_trans = self.status_label_trans
-            api.set_status_flag("transcription")
+        is_summarization = isSummarization
 
         try:
             audio_url = api.upload(self.file_path)
 
             # FOR SUBTITLE
-            if subtitle_format is not None:
+            if subtitle_format is not None and is_summarization is False:
+                print("........... SUBTITLE ...........")
                 self.status_label_subtitle.config(
                     text="Status: Subtitle creation started... Please wait."
                 )
@@ -74,7 +63,8 @@ class Utils:
                     raise ValueError(error_sub)
 
             # FOR TRANSCRIPTION
-            elif subtitle_format is None:
+            elif subtitle_format is None and is_summarization is False:
+                print("........... TRANSCRIPTION ...........")
                 self.status_label_trans.config(
                     text="Status: Transcription started... Please wait."
                 )
@@ -88,25 +78,45 @@ class Utils:
                     self.status_label_trans.config(text=f"Status: Error!! f{str(e)}")
                     raise ValueError(error_t)
 
+            # FOR SUMMARIZATION
+            elif subtitle_format is None and is_summarization is True:
+                print("............. SUMMARIZATION ........")
+                self.status_label_summ.config(
+                    text="Status: Summarization started... Please wait."
+                )
+
+                # Get the result of summarization
+                data, error_t = api.get_summary(audio_url)
+                if data:
+                    self.save_file(data, None, True)
+                else:
+                    self.summary_file_address_label.config(text="Select New File:")
+                    self.status_label_summ.config(text=f"Status: Error!! f{str(e)}")
+                    raise ValueError(error_t)
+
         except Exception as e:
             messagebox.showerror("Error", str(e))
             self.file_path = None
 
             # Reset the paths shown on the GUI to new text and clear
-            if self.file_label is not None:
+            if self.file_label:
                 self.file_label.config(text="Select New File:")
 
             if self.subtitle_file_address_label:
                 self.subtitle_file_address_label.config(text="Select New File:")
 
+            if self.summary_file_address_label:
+                self.summary_file_address_label.config(text="Select New File:")
+
             sys.exit(1)
             # self.start_transcription._stop
             # self.start_subtitle_creation._stop
 
-    # Set subtitle_format back to none when at the end of the function
-    subtitle_format = None
+        # Set subtitle_format back to none at the end of the function
+        subtitle_format = None
+        is_summarization = False
 
-    def save_file(self, data=None, subtitle_format=None):
+    def save_file(self, data=None, subtitle_format=None, isSummarization=False):
         # Set the directory, to save response
         res_directory = os.getcwd() + "\\res"
         os.makedirs(res_directory, exist_ok=True)
@@ -123,16 +133,26 @@ class Utils:
         if data:
             text_filename = os.path.join(res_directory, file_name)
             with open(text_filename, "w") as f:
-                (f.write(data["text"]) if subtitle_format is None else f.write(data))
 
-                if subtitle_format is not None:
+                # SUBTITLE
+                if subtitle_format is not None and isSummarization is False:
+                    f.write(data["text"])
                     self.status_label_subtitle.config(
                         text=f"Status: Subtitle saved as {file_name}"
                     )
 
-                elif subtitle_format is None:
+                # TRANSCRIPTION
+                elif subtitle_format is None and isSummarization is False:
+                    f.write(data)
                     self.status_label_trans.config(
-                        text=f"Status: File saved as {file_name}"
+                        text=f"Status: Transcription saved as {file_name}"
+                    )
+
+                # SUMMARIZATION
+                elif subtitle_format is None and isSummarization is True:
+                    f.write(data)
+                    self.status_label_summ.config(
+                        text=f"Status: Summary saved as {file_name}"
                     )
 
     # -------------- AUDIO PLAYING HANDLERS

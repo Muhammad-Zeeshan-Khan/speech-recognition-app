@@ -1,4 +1,6 @@
 import tkinter as tk
+import threading
+from tkinter import filedialog
 
 import utils
 import api_communication as api
@@ -9,8 +11,34 @@ class Transcription:
         self.root = rootObj
         self.tab = tab
 
-        # self.player = AudioPlayer()
         self.utils = utils.Utils(self.root)
+
+    def upload_file(self):
+        self.trans_file_path = filedialog.askopenfilename(
+            filetypes=[("WAV files", "*.wav")]
+        )
+        # self.player.audio_file = self.trans_file_path
+        self.utils.player.audio_file = self.trans_file_path
+
+        if self.trans_file_path:
+            # Set the file_path property to new address (this property is also used by subtitle and summary)
+            self.utils.file_path = self.trans_file_path
+
+            # Display path on the GUI
+            self.file_label.config(text="Selected File: " + self.trans_file_path)
+
+            # Clear this label in case of error in the utils module
+            self.utils.file_label = self.file_label
+
+            # if errors occurs during upload, set new status
+            api.st_label_trans = self.status_label_trans
+            api.set_status_flag("transcription")
+
+            # Start transcription in another thread
+            self.utils.start_transcription = threading.Thread(
+                target=self.utils.initiate_transcription
+            )
+            self.utils.start_transcription.start()
 
     def create_button(self, parent, text, cmd=None, is_enabled=True, w=58):
         btn = tk.Button(
@@ -47,7 +75,7 @@ class Transcription:
         self.upload_button = self.create_button(
             self.tab,
             "Upload File",
-            self.utils.upload_file,
+            self.upload_file,
         )
         self.upload_button.grid(row=0, column=0, padx=10, pady=10)
 
@@ -80,7 +108,6 @@ class Transcription:
         )
         self.status_label_trans.grid(row=5, column=0, padx=6)
 
+        # Set the labels in utils for modification purpose
         self.utils.audio_label = self.audio_time
-        self.utils.file_label = self.file_label
-
         self.utils.status_label_trans = self.status_label_trans

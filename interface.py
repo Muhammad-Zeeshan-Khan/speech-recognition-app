@@ -1,7 +1,5 @@
-import tkinter as tk
 from tkinter import ttk
 from ctypes import windll
-import os
 
 import utils
 from api_communication import *

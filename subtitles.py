@@ -35,13 +35,16 @@ class Subtitles:
             self.utils.subtitle_file_address_label = self.file_label
 
             # if errors occurs during upload, set new stutus
-            # api.set_status(self.status_label_subtitle)
             api.st_label_sub = self.status_label_subtitle
             api.set_status_flag("subtitle")
 
             # Start transcription in another thread
             self.utils.start_subtitle_creation = threading.Thread(
-                target=self.utils.initiate_transcription, args=(self.subtitle_format,)
+                target=self.utils.initiate_transcription,
+                args=(
+                    self.subtitle_format,
+                    False,
+                ),
             )
             self.utils.start_subtitle_creation.start()
 
