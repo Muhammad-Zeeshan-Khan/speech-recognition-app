@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, filedialog
 import threading
+import os
 
 import utils
 import api_communication as api
@@ -47,6 +48,9 @@ class Subtitles:
                 ),
             )
             self.utils.start_subtitle_creation.start()
+
+    def show_response(self):
+        os.startfile(f"results\\subtitles")
 
     def create_button(self, parent, text, cmd=None, is_enabled=True, w=58):
         btn = tk.Button(
@@ -108,7 +112,7 @@ class Subtitles:
 
         # ----------------------------------------- SHOW RESPONSE BUTTON
         self.show_response_button = self.create_button(
-            self.tab, "Show Response", self.utils.show_response
+            self.tab, "Show Response", self.show_response
         )
         self.show_response_button.grid(row=3, column=0, padx=10, pady=10)
 

@@ -1,6 +1,7 @@
 import tkinter as tk
 import threading
 from tkinter import filedialog
+import os
 
 import utils
 import api_communication as api
@@ -43,6 +44,9 @@ class Summarize:
                 ),
             )
             self.utils.start_summary_creation.start()
+
+    def show_response(self):
+        os.startfile(f"results\\summeries")
 
     def create_button(self, parent, text, cmd=None, is_enabled=True, w=58):
         btn = tk.Button(
@@ -89,7 +93,7 @@ class Summarize:
 
         # ----------------------------------------- SHOW RESPONSE BUTTON
         self.show_response_button = self.create_button(
-            self.tab, "Show Response", self.utils.show_response
+            self.tab, "Show Response", self.show_response
         )
         self.show_response_button.grid(row=3, column=0, padx=10, pady=10)
 

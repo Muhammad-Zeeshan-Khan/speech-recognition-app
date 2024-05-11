@@ -38,6 +38,19 @@ class Utils:
         # Flag to signal the thread to stop
         self.stop_thread_event = threading.Event()
 
+    # Check user api keys, if not, show error
+    def user_api_keys(self):
+        content = None
+        with open("keys.txt", "r") as file:
+            content = len(file.read()) == 53
+
+        if content is not True:
+            messagebox.showerror(
+                "API Keys Error",
+                "Set your api keys.\nIt cuases errors during processings. Create a text file named keys\n.Then past your api keys. eg:{'authorization': 'keys'}",
+            )
+            return False
+
     def initiate_transcription(self, sub_format=None, isSummarization=False):
         subtitle_format = sub_format
         is_summarization = isSummarization
@@ -47,7 +60,6 @@ class Utils:
 
             # FOR SUBTITLE
             if subtitle_format is not None and is_summarization is False:
-                print("........... SUBTITLE ...........")
                 self.status_label_subtitle.config(
                     text="Status: Subtitle creation started... Please wait."
                 )
@@ -64,7 +76,6 @@ class Utils:
 
             # FOR TRANSCRIPTION
             elif subtitle_format is None and is_summarization is False:
-                print("........... TRANSCRIPTION ...........")
                 self.status_label_trans.config(
                     text="Status: Transcription started... Please wait."
                 )
@@ -72,7 +83,7 @@ class Utils:
                 # Get the result of transcription
                 data, error_t = api.get_transcription_result_url(audio_url)
                 if data:
-                    self.save_file(data)
+                    self.save_file(data["text"])
                 else:
                     self.file_label.config(text="Select New File:")
                     self.status_label_trans.config(text=f"Status: Error!! f{str(e)}")
@@ -80,7 +91,6 @@ class Utils:
 
             # FOR SUMMARIZATION
             elif subtitle_format is None and is_summarization is True:
-                print("............. SUMMARIZATION ........")
                 self.status_label_summ.config(
                     text="Status: Summarization started... Please wait."
                 )
@@ -118,8 +128,12 @@ class Utils:
 
     def save_file(self, data=None, subtitle_format=None, isSummarization=False):
         # Set the directory, to save response
-        res_directory = os.getcwd() + "\\res"
-        os.makedirs(res_directory, exist_ok=True)
+        base_dir = os.getcwd() + "\\results"
+        save_path = None
+
+        # Labels and their texts
+        label = None
+        label_text = None
 
         # Set the file name
         file_name = os.path.basename(f"{self.file_path}").split(".")[0]
@@ -131,29 +145,30 @@ class Utils:
 
         # Save the file in /res and set status label
         if data:
-            text_filename = os.path.join(res_directory, file_name)
-            with open(text_filename, "w") as f:
+            # SUBTITLE
+            if subtitle_format is not None and isSummarization is False:
+                save_path = os.path.join(base_dir, "subtitles", file_name)
+                label = self.status_label_subtitle
+                label_text = f"Status: Subtitle saved as {file_name}"
 
-                # SUBTITLE
-                if subtitle_format is not None and isSummarization is False:
-                    f.write(data["text"])
-                    self.status_label_subtitle.config(
-                        text=f"Status: Subtitle saved as {file_name}"
-                    )
+            # TRANSCRIPTION
+            elif subtitle_format is None and isSummarization is False:
+                save_path = os.path.join(base_dir, "transcriptions", file_name)
+                label = self.status_label_trans
+                label_text = f"Status: Transcription saved as {file_name}"
 
-                # TRANSCRIPTION
-                elif subtitle_format is None and isSummarization is False:
-                    f.write(data)
-                    self.status_label_trans.config(
-                        text=f"Status: Transcription saved as {file_name}"
-                    )
+            # SUMMARIZATION
+            elif subtitle_format is None and isSummarization is True:
+                save_path = os.path.join(base_dir, "summeries", file_name)
+                label = self.status_label_summ
+                label_text = f"Status: Summary saved as {file_name}"
 
-                # SUMMARIZATION
-                elif subtitle_format is None and isSummarization is True:
-                    f.write(data)
-                    self.status_label_summ.config(
-                        text=f"Status: Summary saved as {file_name}"
-                    )
+            # Create the sub directories (subtitles, summeries) if they doesn't exist
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+
+            with open(save_path, "w") as f:
+                f.write(data)
+                label.config(text=label_text)
 
     # -------------- AUDIO PLAYING HANDLERS
     def play_audio(self):
@@ -185,7 +200,3 @@ class Utils:
             self.root.after_cancel(
                 self.schedule_call
             )  # Cancel calls when audio playing finishes
-
-    # -------------- RESPONSE HANDLERS
-    def show_response(self):
-        os.startfile(f"res")

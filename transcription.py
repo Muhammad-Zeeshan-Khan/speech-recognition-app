@@ -1,6 +1,7 @@
 import tkinter as tk
 import threading
 from tkinter import filedialog
+import os
 
 import utils
 import api_communication as api
@@ -39,6 +40,9 @@ class Transcription:
                 target=self.utils.initiate_transcription
             )
             self.utils.start_transcription.start()
+
+    def show_response(self):
+        os.startfile(f"results\\transcriptions")
 
     def create_button(self, parent, text, cmd=None, is_enabled=True, w=58):
         btn = tk.Button(
@@ -91,7 +95,7 @@ class Transcription:
 
         # ----------------------------------------- Show response button
         self.show_response_button = self.create_button(
-            self.tab, "Show Response", self.utils.show_response
+            self.tab, "Show Response", self.show_response
         )
         self.show_response_button.grid(row=4, column=0, padx=10, pady=10)
 

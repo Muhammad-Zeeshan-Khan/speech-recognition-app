@@ -1,5 +1,5 @@
 __pycache__
 test_files
-res
+results
 
 When the file is loaded on disconnected computer, the file path is cleared but the audio could still be played

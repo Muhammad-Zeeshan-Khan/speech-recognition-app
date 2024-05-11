@@ -1,10 +1,24 @@
 import requests
 import time
+import sys
+import json
+from tkinter import messagebox
 
 
 upload_endpoint = "https://api.assemblyai.com/v2/upload"
 base_url = "https://api.assemblyai.com/v2/transcript"
-headers = {"authorization": "3c6d8da6fde74785aa3e71571c482a16"}
+
+
+global headers
+headers = None
+with open("keys.txt", "r") as file:
+    try:
+        headers = json.load(file)
+    except json.decoder.JSONDecodeError as e:
+        messagebox.showerror(
+            "API Key Format Error", "API key must be in the dictionary format"
+        )
+        sys.exit(1)
 
 
 # Set status
@@ -129,10 +143,3 @@ def get_summary(audio_url):
 
 
 # ------------------------- x ------------------------- x
-# a_url = upload(
-#     "C:\\Users\\Muhammad Zeeshan\\Desktop\\speech-recognition\\test_files\\female's voice.wav"
-# )
-
-# print("uploading completed")
-# response, err = get_summary(a_url)
-# print(response)
