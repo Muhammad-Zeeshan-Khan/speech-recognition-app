@@ -21,8 +21,15 @@ class Subtitles:
         # Get the selected subtitle format and convert to lower case
         self.subtitle_format = self.dropdown_menu.get().lower()
 
+        filetypes = [
+            ("All Audio Files", "*.wav *mp3 *.ogg"),
+            ("WAV File", "*.wav"),
+            ("MP3 File", "*.mp3"),
+            ("OGG File", "*.ogg"),
+        ]
+
         self.subtitle_file_path = filedialog.askopenfilename(
-            filetypes=[("WAV files", "*.wav")]
+            title="Open Audio File", filetypes=filetypes
         )
 
         if self.subtitle_file_path:

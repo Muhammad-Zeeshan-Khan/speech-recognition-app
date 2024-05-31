@@ -15,9 +15,17 @@ class Transcription:
         self.utils = utils.Utils(self.root)
 
     def upload_file(self):
+        filetypes = [
+            ("All Audio Files", "*.wav *mp3 *.ogg"),
+            ("WAV File", "*.wav"),
+            ("MP3 File", "*.mp3"),
+            ("OGG File", "*.ogg"),
+        ]
+
         self.trans_file_path = filedialog.askopenfilename(
-            filetypes=[("WAV files", "*.wav")]
+            title="Open Audio File", filetypes=filetypes
         )
+
         # self.player.audio_file = self.trans_file_path
         self.utils.player.audio_file = self.trans_file_path
 
