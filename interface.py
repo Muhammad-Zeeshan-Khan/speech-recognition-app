@@ -21,15 +21,10 @@ class GUI:
         self.root.geometry("1000x535")
         self.root.resizable(width=False, height=False)
         self.root.title("Audio Transcription App")
-        self.icon_image = tk.PhotoImage(file=f"{os.getcwd()}//others//icon-small.png")
+        self.icon_image = tk.PhotoImage(file=f"{os.path.join(os.getcwd(), "others", "icon-small.png")}")
         self.root.iconphoto(True, self.icon_image)
 
         self.utils = utils.Utils(root)
-
-        # Check user api keys, if not, show error
-        result = self.utils.user_api_keys()
-        if result is False:
-            self.prepare_exit()
 
         # Create style for ttk.frame
         self.style = ttk.Style()

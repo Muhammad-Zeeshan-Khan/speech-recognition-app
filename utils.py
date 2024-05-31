@@ -38,19 +38,6 @@ class Utils:
         # Flag to signal the thread to stop
         self.stop_thread_event = threading.Event()
 
-    # Check user api keys, if not, show error
-    def user_api_keys(self):
-        content = None
-        with open("keys.txt", "r") as file:
-            content = len(file.read()) == 53
-
-        if content is not True:
-            messagebox.showerror(
-                "API Keys Error",
-                "Set your api keys.\nIt cuases errors during processings. Create a text file named keys\n.Then past your api keys. eg:{'authorization': 'keys'}",
-            )
-            return False
-
     def initiate_transcription(self, sub_format=None, isSummarization=False):
         subtitle_format = sub_format
         is_summarization = isSummarization

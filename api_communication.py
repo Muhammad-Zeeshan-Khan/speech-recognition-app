@@ -1,8 +1,14 @@
 import requests
 import time
-import sys
 import json
-from tkinter import messagebox
+
+# import sys
+# import os
+
+# from requests_toolbelt.multipart.encoder import (
+#     MultipartEncoder,
+#     MultipartEncoderMonitor,
+# )
 
 
 upload_endpoint = "https://api.assemblyai.com/v2/upload"
@@ -12,13 +18,7 @@ base_url = "https://api.assemblyai.com/v2/transcript"
 global headers
 headers = None
 with open("keys.txt", "r") as file:
-    try:
-        headers = json.load(file)
-    except json.decoder.JSONDecodeError as e:
-        messagebox.showerror(
-            "API Key Format Error", "API key must be in the dictionary format"
-        )
-        sys.exit(1)
+    headers = json.load(file)
 
 
 # Set status
@@ -50,6 +50,49 @@ def set_status(st_label):
     status_label = st_label
 
 
+# def create_callback(encoder):
+#     total_size = encoder.len
+#     global status_label
+
+#     def callback(monitor):
+#         progress_percentage = (monitor.bytes_read / total_size) * 100
+
+#         # status_string = f"Uploaded {monitor.bytes_read} of {total_size} bytes ({progress_percentage: .2f})%"
+#         status_string = f"Status: Uploading...  {progress_percentage: .2f}% Completed"
+
+#         status_label.config(text=status_string)
+
+#     return callback
+
+
+# # Upload - Return the url of the uplaoded audio file
+# def upload(filename):
+#     with open(filename, "rb") as file:
+
+#         # Create MultipartEncoder for the file
+#         encoder = MultipartEncoder(fields={"file": file})
+
+#         # Create MultipartEncoderMonitor to monitor progress
+#         monitor = MultipartEncoderMonitor(encoder, create_callback(encoder))
+
+#         print(monitor.encoder.fields["file"])
+
+#         try:
+#             global status_label
+#             status_label.config(text="Status: Uploading...")
+
+#             # Perform the upload using streaming
+#             response = requests.post(
+#                 upload_endpoint, headers=headers, data=monitor, stream=True
+#             )
+
+#             return response.json()["upload_url"]  # AUDIO URL IN THE CLOUD
+
+#         except requests.exceptions.RequestException as e:
+#             status_label.config(text="Status: Error uploading file")
+#             raise RuntimeError(f"{e}")
+
+
 # Upload - Return the url of the uplaoded audio file
 def upload(filename):
     def read_file(filename, chunk_size=5242880):
@@ -58,7 +101,8 @@ def upload(filename):
                 data = _file.read(chunk_size)
                 if not data:
                     break
-                yield data  # keep returning the binary
+
+                yield data  # keep returning the bytes
 
     try:
         global status_label
@@ -67,9 +111,14 @@ def upload(filename):
         upload_response = requests.post(
             upload_endpoint, headers=headers, data=read_file(filename)
         )
-        return upload_response.json()["upload_url"]  # AUDIO URL IN THE CLOUD
 
-    except requests.exceptions.RequestException as e:
+        if upload_response.status_code == 200:
+            return upload_response.json()["upload_url"]  # AUDIO URL IN THE CLOUD
+
+        elif upload_response.status_code == 401:
+            raise Exception(f"Unauthorized! API Key error")
+
+    except Exception as e:
         status_label.config(text="Status: Error uploading file")
         raise RuntimeError(f"{e}")
 
