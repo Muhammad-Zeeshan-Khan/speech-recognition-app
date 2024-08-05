@@ -123,7 +123,7 @@ def upload(filename):
         raise RuntimeError(f"{e}")
 
 
-# Transcription - Returns the ID of the Job (transcription) that is given to AssemblyAI
+# Transcription - Returns the ID of the Job that is given to AssemblyAI
 def transcribe(audio_url, is_summarization=False):
     data = None
 
@@ -167,11 +167,12 @@ def get_subtitle_file(audio_url, file_format):
     if file_format not in ["srt", "vtt"]:
         return "Invalid file format. Valid formats are 'srt' and 'vtt'."
 
+    # Give the job as what to do with the uploaded audio to AssemblyAI and return job id
     transcribe_id = transcribe(audio_url)
     url = f"{base_url}/{transcribe_id}/{file_format}"
 
     while True:
-        data = poll(transcribe_id)
+        data = poll(transcribe_id)  # Now keep checking...
         if data["status"] == "completed":
             return requests.get(url, headers=headers), None
         elif data["status"] == "error":

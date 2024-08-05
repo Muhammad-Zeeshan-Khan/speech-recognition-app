@@ -16,7 +16,7 @@ class Transcription:
 
     def upload_file(self):
         filetypes = [
-            ("All Audio Files", "*.wav *mp3 *.ogg"),
+            ("All Audio Files", "*.wav *.mp3 *.ogg"),
             ("WAV File", "*.wav"),
             ("MP3 File", "*.mp3"),
             ("OGG File", "*.ogg"),

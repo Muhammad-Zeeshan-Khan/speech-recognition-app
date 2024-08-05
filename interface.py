@@ -21,6 +21,7 @@ class GUI:
         self.root.geometry("1000x535")
         self.root.resizable(width=False, height=False)
         self.root.title("Audio Transcription App")
+        
         self.icon_image = tk.PhotoImage(file=f"{os.path.join(os.getcwd(), "others", "icon-small.png")}")
         self.root.iconphoto(True, self.icon_image)
 
@@ -32,9 +33,9 @@ class GUI:
 
         # Create a Notebook (tabbed interface)
         self.notebook = ttk.Notebook(root)
-        self.notebook.pack(expand=True, fill="both")
+        self.notebook.pack(expand=True, fill="both") # Expand in both, x and y directions
 
-        # Transcription Tab
+        # Transcription Tab | ttk.frame(master, options)
         self.transcription_tab = ttk.Frame(self.notebook, style="TFrame")
         self.notebook.add(self.transcription_tab, text=" Transcription ")
 
