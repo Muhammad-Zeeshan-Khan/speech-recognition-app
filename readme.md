@@ -1,12 +1,12 @@
 # Speech Recognition Application
 
-## About
+### About
 
 This is a Speech Recognition Application for Windows built with a graphical user interface (GUI) using Python. The application utilizes AssemblyAi's API for speech transcription. It was completed on December 11, 2023.
 
 ----
 
-## How to Use This Application
+### How to Use This Application
 
 1. Sign up at [AssemblyAI](https://www.assemblyai.com/) and get your API key.
 
