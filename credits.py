@@ -6,8 +6,7 @@ class Credits:
         self.root = rootObj
         self.tab = tab
 
-        self.credits_text = """\t\t\t\tProjects Credits\n\nSupervisor: Dr. Kamran Ullah\nProgrammer: Muhammad Zeeshan (Roll Number: 264)
-        \nAcknowledgments:\nWe express our gratitude to Dr. Kamran Ullah for providing valuable guidance and support throughout the development of this speech recognition project. Special thanks to Muhammad Zeeshan for his dedicated programming efforts, bringing the project to fruition.\n\nThis project was conducted at the University of Agriculture, Peshawar."""
+        self.credits_text = """\n\n\n\t\t Developed by Muhammad Zeeshan Khan"""
 
         credits_label = tk.Label(
             self.tab,
