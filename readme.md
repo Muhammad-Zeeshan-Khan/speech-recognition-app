@@ -13,6 +13,3 @@ You can get the latest version [here](https://github.com/Muhammad-Zeeshan-Khan/s
 
 ## Credits
 - Muhammad Zeeshan Khan
-----
-
-- **By:** Muhammad Zeeshan Khan
