@@ -13,3 +13,6 @@ You can get the latest version [here](https://github.com/Muhammad-Zeeshan-Khan/s
 
 ## Credits
 - Muhammad Zeeshan Khan
+
+## License
+[MIT](https://github.com/Muhammad-Zeeshan-Khan/speech-recognition-app/blob/master/LICENSE) Liscense
