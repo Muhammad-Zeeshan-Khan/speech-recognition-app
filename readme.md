@@ -1,6 +1,7 @@
 # Speech Recognition Application
 This is a Speech Recognition Application built with a graphical user interface (GUI) using Python. The application utilizes AssemblyAi's API for speech transcription. It was completed on December 11, 2023.
 
+![python v2.12.3](https://img.shields.io/badge/python-v3.12.3-27c93f)
 ![pygame v2.5.2](https://img.shields.io/badge/pygame-v2.5.2-blue)
 
 ## API Keys
