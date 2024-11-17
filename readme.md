@@ -1,6 +1,8 @@
 # Speech Recognition Application
 This is a Speech Recognition Application built with a graphical user interface (GUI) using Python. The application utilizes AssemblyAi's API for speech transcription. It was completed on December 11, 2023.
 
+![pygame v2.5.2](https://img.shields.io/badge/pygame-v2.5.2-blue)
+
 ## API Keys
 1. Sign up at [AssemblyAI](https://www.assemblyai.com/) and get your API key.
 2. Copy your API key and paste it into the keys.txt file.
